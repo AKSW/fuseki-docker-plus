@@ -29,9 +29,47 @@ docker build -t aksw/fuseki-plus:6.0.0 .
 docker compose up -d
 ```
 
-### Manage Plugins
+### Docker Compose Usage (Recommended)
 
-The `plugins` CLI is available on PATH. For `docker run`, override the entrypoint with `--entrypoint plugins`. For `docker compose exec`, just run `plugins` as the command directly.
+Set environment variables for proper permissions:
+```bash
+export APP_UID="$(id -u)"
+export APP_GID="$(id -g)"
+export DOCKER_GID="$(getent group docker | cut -d: -f3)"
+```
+
+Manage plugins using `docker compose run --rm --entrypoint plugins` (works even when container is stopped):
+```bash
+docker compose run --rm --entrypoint plugins fuseki list
+docker compose run --rm --entrypoint plugins fuseki status
+docker compose run --rm --entrypoint plugins fuseki add https://example.com/plugin-1.0.0.jar
+docker compose run --rm --entrypoint plugins fuseki enable jena-exectracker-0.7.0.jar
+docker compose run --rm --entrypoint plugins fuseki disable jena-exectracker-0.7.0.jar
+docker compose run --rm --entrypoint plugins fuseki remove jena-exectracker-0.7.0.jar
+```
+
+**Alternative:** Create a `.env` file in the same directory as `docker-compose.yaml`:
+```bash
+echo "APP_UID=$(id -u)" >> .env
+echo "APP_GID=$(id -g)" >> .env
+echo "DOCKER_GID=$(getent group docker | cut -d: -f3)" >> .env
+```
+
+After creating the `.env` file, you can run without exports:
+```bash
+docker compose run --rm --entrypoint plugins fuseki list
+```
+
+**Alternative:** Use the `dc` wrapper script (from the `example` folder):
+```bash
+./dc plugins list
+./dc plugins status
+./dc plugins add https://example.com/plugin-1.0.0.jar
+```
+
+Replace `fuseki` with your actual service name if different.
+
+### Plain Docker Usage
 
 List available plugins:
 ```bash
@@ -43,29 +81,29 @@ Check plugin status:
 docker run --rm --entrypoint plugins aksw/fuseki-plus:6.0.0 status
 ```
 
-With docker compose (replace `fuseki-service` with your actual service name):
+With docker compose (replace `fuseki` with your actual service name):
 ```bash
-docker compose exec fuseki-service plugins list
+docker compose exec fuseki plugins list
 ```
 
 Add a plugin from URL:
 ```bash
-docker compose exec fuseki-service plugins add https://example.com/plugin-1.0.0.jar
+docker compose exec fuseki plugins add https://example.com/plugin-1.0.0.jar
 ```
 
 Enable a plugin (activates it):
 ```bash
-docker compose exec fuseki-service plugins enable jena-exectracker-0.7.0.jar
+docker compose exec fuseki plugins enable jena-exectracker-0.7.0.jar
 ```
 
 Disable a plugin:
 ```bash
-docker compose exec fuseki-service plugins disable jena-exectracker-0.7.0.jar
+docker compose exec fuseki plugins disable jena-exectracker-0.7.0.jar
 ```
 
 Remove a plugin:
 ```bash
-docker compose exec fuseki-service plugins remove jena-exectracker-0.7.0.jar
+docker compose exec fuseki plugins remove jena-exectracker-0.7.0.jar
 ```
 
 ## Directory Structure

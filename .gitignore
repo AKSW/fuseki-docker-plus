@@ -1,3 +1,7 @@
 # Generated runtime files from tests and docker compose
 tests/run/
 test-run/
+
+.env
+run
+

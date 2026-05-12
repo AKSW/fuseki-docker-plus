@@ -1,7 +1,7 @@
-name: copper-staging
+#name: example
 
 services:
-  fuseki-plus:
+  fuseki:
     image: aksw/fuseki-plus:6.0.0
     init: true
     user: "${APP_UID}:${APP_GID}"
@@ -13,6 +13,8 @@ services:
       - "${DOCKER_GID}"
     volumes:
       - ./run:/app/fuseki/run
+      - ./resources:/app/fuseki/run/resources
+      - ./example.service.ttl:/app/fuseki/run/configuration/example.service.ttl
       - /var/run/docker.sock:/var/run/docker.sock
     # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme
     # working_dir: /data/coypu

@@ -1,0 +1,151 @@
+PREFIX fuseki:    <http://jena.apache.org/fuseki#>
+PREFIX rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:      <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:       <http://www.w3.org/2002/07/owl#>
+PREFIX tdb1:      <http://jena.hpl.hp.com/2008/tdb#>
+PREFIX tdb2:      <http://jena.apache.org/2016/tdb#>
+PREFIX text:      <http://jena.apache.org/text#> 
+PREFIX ja:        <http://jena.hpl.hp.com/2005/11/Assembler#>
+PREFIX geosparql: <http://jena.apache.org/geosparql#>
+
+PREFIX fe:        <http://jena.apache.org/from-enhancer#>
+PREFIX se:        <http://jena.apache.org/service-enhancer#>
+PREFIX xdt:       <http://jsa.aksw.org/dt/sparql/>
+
+PREFIX jxp:       <http://jenax.aksw.org/plugin#>
+PREFIX norse:     <https://w3id.org/aksw/norse#>
+PREFIX jetf:      <https://w3id.org/aksw/jena/exectracker/fuseki#>
+PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
+
+<#service> rdf:type fuseki:Service ;
+  fuseki:name "example" ;
+  fuseki:endpoint [
+    fuseki:operation fuseki:query ;
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "600000" ] ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "update" ;
+    fuseki:operation fuseki:update ;
+    fuseki:allowedUsers "test" ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:operation fuseki:gsp_rw ; 
+    fuseki:name "data" ;
+    fuseki:allowedUsers "test" ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "tracker" ;
+    fuseki:operation fuseki:tracker ;
+    ja:context [ ja:cxtName "allowAbort" ; ja:cxtValue false ] ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "admin-tracker" ;
+    fuseki:operation fuseki:tracker ;
+    fuseki:allowedUsers "test" ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "tracker" ;
+    fuseki:operation jetf:exectracker ;
+    ja:context [ ] ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "admin-tracker" ;
+    fuseki:operation jetf:exectracker ;
+    ja:context [
+      ja:cxtName "https://w3id.org/aksw/jena/exectracker/fuseki#allowAbort" ;
+      ja:cxtValue true ;
+    ];
+    fuseki:allowedUsers "test" ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "graphql" ;
+    fuseki:operation g4sf:query ;
+    ja:context [
+      ja:cxtName "https://w3id.org/aksw/graphql4sparql/fuseki#schemaFile" ;
+      ja:cxtValue "/app/fuseki/run/resources/mona-lisa.graphql" ;
+    ];
+    ja:context [
+      ja:cxtName "https://w3id.org/aksw/graphql4sparql/fuseki#sparqlQueryEndpoint" ;
+      ja:cxtValue "/example" ;
+    ] ;
+    ja:context [
+      ja:cxtName "https://w3id.org/aksw/graphql4sparql/fuseki#sparqlQueryViewer" ;
+      ja:cxtValue "https://yasgui.triply.cc/#?query={ENCODED_SPARQL_QUERY}&endpoint={ENCODED_SPARQL_QUERY_ENDPOINT}" ;
+    ] ;
+  ] ;
+  fuseki:dataset <#pluginDS> .
+
+<#pluginDS> a fe:DatasetFromAsFilter
+  ; ja:baseDataset <#pluginDS2>
+  ; fe:alias [ fe:graph <https://data.coypu.org/> ; fe:expr "true"^^xdt:expr ],
+             [ fe:graph <https://data.coypu.org/events/acled/> ; fe:expr "?x IN (<https://data.coypu.org/events/acled/2022/>, <https://data.coypu.org/events/acled/2023/> )"^^xdt:expr] 
+  .
+
+<#pluginDS2>
+  a jxp:DatasetRDFSEnabled ;
+  ja:rdfsSchema "/app/fuseki/run/resources/_merged_ontology.ttl" ;
+  ja:dataset <#pluginDS3> .
+
+<#pluginDS3> a se:DatasetServiceEnhancer ;
+    se:cacheMaxEntryCount 10000 ;
+    ja:baseDataset
+        <#geoDS> .
+
+<#geoDS> rdf:type geosparql:GeosparqlDataset ;
+  geosparql:spatialIndexFile     "/app/fuseki/run/databases/tdb2/example/spatial.index";
+  geosparql:inference            false ;
+  geosparql:queryRewrite         true ;
+  geosparql:indexEnabled         true ;
+  geosparql:applyDefaultGeometry false ;
+  geosparql:spatialIndexPerGraph true ;
+  geosparql:srsUri <http://www.opengis.net/def/crs/EPSG/0/4326> ;
+  geosparql:indexSizes           "-1,-1,-1" ;
+  geosparql:indexExpires         "5000,5000,5000" ;
+  geosparql:dataset              <#textDS> ;
+  .
+
+<#textDS> rdf:type     text:TextDataset ;
+  text:dataset   <#baseDS> ;
+  text:index     <#indexLucene> ;
+  .
+
+<#indexLucene> a text:TextIndexLucene ;
+  text:directory <./lucene/example> ;
+  text:entityMap <#entMap> ;
+  text:storeValues true ;
+  text:analyzer [ a text:StandardAnalyzer ] ;
+  .
+
+<#entMap> a text:EntityMap ;
+  text:defaultField     "label" ;
+  text:entityField      "uri" ;
+  text:uidField         "uid" ;
+  text:langField        "lang" ;
+  text:graphField       "graph" ;
+  text:map (
+    [ text:field "label" ;
+      text:predicate rdfs:label ]
+    [ text:field "altLabel" ;
+      text:predicate <http://www.w3.org/2004/02/skos/core#altLabel> ]
+  ) ;
+  .
+
+<#baseDS> rdf:type      ja:RDFDataset ;
+  ja:defaultGraph <#graph> ;
+  .
+
+#<#graph> rdf:type ja:MemoryModel ;
+#  ja:content [
+#    ja:externalContent <file:../resources/mona-lisa.ttl> ;
+#  ] ;
+#  .
+
+<#baseDS> rdf:type tdb2:DatasetTDB2 ;
+  tdb2:location "/app/fuseki/run/databases/tdb2/example/" ;
+  ja:content [
+    ja:externalContent <file:../resources/mona-lisa.ttl> ;
+  ] ;
+  ### tdb2:unionDefaultGraph true ;
+  ### tdb2:unionDefaultGraph false ;
+  .
+
