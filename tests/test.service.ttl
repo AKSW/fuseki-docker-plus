@@ -11,7 +11,7 @@ PREFIX geosparql: <http://jena.apache.org/geosparql#>
 PREFIX jetf:      <https://w3id.org/aksw/jena/exectracker/fuseki#>
 
 <#service> rdf:type fuseki:Service ;
-  fuseki:name "ds" ;
+  fuseki:name "test" ;
   fuseki:dataset <#baseDS> ;
   fuseki:endpoint [
     fuseki:operation fuseki:query ;

@@ -11,7 +11,7 @@ case "${BATS_TEST_DIRNAME}" in
 esac
 
 COMPOSE_FILE="${BATS_TEST_DIRNAME}/docker-compose.yaml"
-PLUGIN_LIST_CMD="docker compose -f ${COMPOSE_FILE} exec fuseki plugins"
+PLUGIN_LIST_CMD="./dc exec fuseki plugins"
 
 # ------------------------------------------------------------------
 
@@ -33,14 +33,14 @@ setup() {
     fi
 
     # Make sure compose is running
-    docker compose -f "${COMPOSE_FILE}" up -d --quiet-pull 2>/dev/null
+    ./dc up -d --quiet-pull 2>/dev/null
 
     # Wait for container to become healthy (healthcheck has start_period of 30s)
     # Poll the health status for up to 60 seconds
     local retries=0
     while true; do
         local health_status
-        health_status=$(docker compose -f "${COMPOSE_FILE}" ps --format '{{.Health}}' fuseki 2>/dev/null)
+        health_status=$(./dc ps --format '{{.Health}}' fuseki 2>/dev/null)
         if [ "$health_status" = "healthy" ]; then
             break
         fi
@@ -53,7 +53,7 @@ setup() {
 }
 
 teardown() {
-    docker compose -f "${COMPOSE_FILE}" down -v --remove-orphans 2>/dev/null || true
+    ./dc down -v --remove-orphans 2>/dev/null || true
 }
 
 # ------------------------------------------------------------------
@@ -84,7 +84,7 @@ teardown() {
 
 # Healthcheck test - runs a SPARQL query to verify Fuseki is responsive
 @test "Fuseki healthcheck passes (SPARQL query works)" {
-    run docker compose -f "${COMPOSE_FILE}" exec fuseki curl -f -s -o /dev/null -w '%{http_code}' 'http://localhost:3030/test' --data-urlencode 'query=SELECT * { ?s a ?o } LIMIT 1'
+    run ./dc exec fuseki curl -f -s -o /dev/null -w '%{http_code}' 'http://localhost:3030/test' --data-urlencode 'query=SELECT * { ?s a ?o } LIMIT 1'
     [[ "$output" == "200" ]]
 }
 

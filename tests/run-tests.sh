@@ -53,7 +53,7 @@ else
 fi
 
 # Clean up any leftover containers
-docker compose -f docker-compose.yaml down -v --remove-orphans 2>/dev/null || true
+./dc down -v --remove-orphans 2>/dev/null || true
 
 # Run tests
 echo
@@ -63,7 +63,7 @@ result=0
 bats "$@" plugins.bats || result=$?
 
 # Clean up
-docker compose -f docker-compose.yaml down -v --remove-orphans 2>/dev/null || true
+./dc down -v --remove-orphans 2>/dev/null || true
 
 echo
 if [ "$result" -eq 0 ]; then

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+mkdir -p run/configuration
+APP_UID="$(id -u)" APP_GID="$(id -g)" DOCKER_GID="$(getent group docker | cut -d: -f3)" docker compose "$@"
+
