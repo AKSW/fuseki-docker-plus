@@ -1,0 +1,130 @@
+PREFIX fuseki:    <http://jena.apache.org/fuseki#>
+PREFIX rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:      <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:       <http://www.w3.org/2002/07/owl#>
+PREFIX tdb1:      <http://jena.hpl.hp.com/2008/tdb#>
+PREFIX tdb2:      <http://jena.apache.org/2016/tdb#>
+PREFIX text:      <http://jena.apache.org/text#> 
+PREFIX ja:        <http://jena.hpl.hp.com/2005/11/Assembler#>
+PREFIX geosparql: <http://jena.apache.org/geosparql#>
+
+PREFIX fe:        <http://jena.apache.org/from-enhancer#>
+PREFIX se:        <http://jena.apache.org/service-enhancer#>
+PREFIX xdt:       <http://jsa.aksw.org/dt/sparql/>
+
+PREFIX jxp:       <http://jenax.aksw.org/plugin#>
+PREFIX norse:     <https://w3id.org/aksw/norse#>
+
+<#ep05> fuseki:name "update" ; fuseki:operation fuseki:update .
+<#ep08> fuseki:name "spatial-indexer" ; fuseki:operation fuseki:spatial-indexer .
+
+<#ep-gql>
+  fuseki:name "graphql" ;
+  fuseki:operation norse:graphql.fmod.op ;
+  # ja:context [ ja:cxtName "https://w3id.org/aksw/norse#graphql.schemaFile" ; ja:cxtValue "/run/configuration/coypu.graphql" ];
+  ja:context [ ja:cxtName "https://w3id.org/aksw/norse#graphql.schemaFile"          ; ja:cxtValue "/run/configuration/coypu.graphql" ] ;
+  ja:context [ ja:cxtName "https://w3id.org/aksw/norse#graphql.sparqlQueryEndpoint" ; ja:cxtValue "/coypu" ] ;
+  ja:context [ ja:cxtName "https://w3id.org/aksw/norse#graphql.sparqlQueryViewer"   ; ja:cxtValue "https://yasgui.triply.cc/#?query={ENCODED_SPARQL_QUERY}&endpoint={ENCODED_SPARQL_QUERY_ENDPOINT}" ] ;
+  # ja:context [ ja:cxtName "https://w3id.org/aksw/norse#graphql.sparqlQueryViewer"   ; ja:cxtValue "/#/dataset/coypu/query?query={ENCODED_SPARQL_QUERY}" ] ;
+  .
+
+
+<#service> rdf:type fuseki:Service ;
+  fuseki:name "coypu" ;
+  fuseki:endpoint <#ep-gql> ;
+  fuseki:endpoint <#ep05>, <#ep08> ;
+  fuseki:endpoint [
+    fuseki:operation fuseki:query ;
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "600000" ] ;
+  ] ;
+  fuseki:endpoint [ 
+    fuseki:operation fuseki:gsp_rw ; 
+    fuseki:name "data" 
+  ] ;
+  fuseki:endpoint [
+    fuseki:operation fuseki:tracker ;
+    fuseki:name "tracker" ;
+    ja:context [ ja:cxtName "allowAbort" ; ja:cxtValue false ] ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:operation fuseki:tracker ;
+    fuseki:name "admin-tracker" ;
+    fuseki:allowedUsers "katherine" ;
+  ] ;
+  fuseki:dataset <#pluginDS> .
+
+<#pluginDS> a fe:DatasetFromAsFilter
+  ; ja:baseDataset <#pluginDS2>
+  ; fe:alias [ fe:graph <https://data.coypu.org/> ; fe:expr "true"^^xdt:expr ],
+             [ fe:graph <https://data.coypu.org/events/acled/> ; fe:expr "?x IN (<https://data.coypu.org/events/acled/2022/>, <https://data.coypu.org/events/acled/2023/> )"^^xdt:expr] 
+  .
+
+<#pluginDS2>
+  a jxp:DatasetRDFSEnabled ;
+  ja:rdfsSchema "/run/files/coypu/_merged_ontology.ttl" ;
+  ja:dataset <#pluginDS3> .
+
+<#pluginDS3> a se:DatasetServiceEnhancer ;
+    se:cacheMaxEntryCount 10000 ;
+    ja:baseDataset
+        <#geoDS> .
+
+<#geoDS> rdf:type geosparql:GeosparqlDataset ;
+    ## If absent build an in-memory index each time.
+    geosparql:spatialIndexFile     "/run/databases/tdb2/coypu/spatial.index";
+
+    ## Default settings. See documentation for meanings.
+    geosparql:inference            false ;
+    geosparql:queryRewrite         true ;
+    geosparql:indexEnabled         true ;
+    geosparql:applyDefaultGeometry false ;
+
+    # graph based index
+    geosparql:spatialIndexPerGraph true ;
+   
+    # SRS URI
+    geosparql:srsUri <http://www.opengis.net/def/crs/EPSG/0/4326> ;
+
+    # 3 item lists: [Geometry Literal, Geometry Transform, Query Rewrite]
+    geosparql:indexSizes           "-1,-1,-1" ;       # Default - unlimited.
+    geosparql:indexExpires         "5000,5000,5000" ; # Default - time in milliseconds.
+
+    ## Required - data over which GeoSPARQL is applied.
+    geosparql:dataset
+      <#textDS> ;
+      .
+
+
+### Fulltext index here
+<#textDS> rdf:type     text:TextDataset ;
+    text:dataset   <#baseDS> ;
+    text:index     <#indexLucene> .
+
+<#indexLucene> a text:TextIndexLucene ;
+    text:directory <./lucene/coypu> ;
+    text:entityMap <#entMap> ;
+    text:storeValues true ;
+    text:analyzer [ a text:StandardAnalyzer ] ;
+    #text:queryAnalyzer [ a text:StandardAnalyzer ] ;
+    #text:queryParser text:AnalyzingQueryParser 
+.
+
+<#entMap> a text:EntityMap ;
+    text:defaultField     "label" ;
+    text:entityField      "uri" ;
+    text:uidField         "uid" ;
+    text:langField        "lang" ;
+    text:graphField       "graph" ;
+    text:map (
+        [ text:field "label" ;
+          text:predicate rdfs:label ]
+        [ text:field "altLabel" ;
+          text:predicate <http://www.w3.org/2004/02/skos/core#altLabel> ]
+    ) .
+
+
+<#baseDS> rdf:type tdb2:DatasetTDB2 ;
+    tdb2:location "/run/databases/tdb2/coypu/" ;
+    tdb2:unionDefaultGraph true ;
+    ### tdb2:unionDefaultGraph false ;
+.
