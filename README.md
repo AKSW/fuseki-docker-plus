@@ -31,41 +31,41 @@ docker compose up -d
 
 ### Manage Plugins
 
-The plugins CLI is available at `/usr/local/bin/plugins`. Use Docker's entrypoint override to run plugin commands:
+The `plugins` CLI is available on PATH. For `docker run`, override the entrypoint with `--entrypoint plugins`. For `docker compose exec`, just run `plugins` as the command directly.
 
 List available plugins:
 ```bash
-docker run --rm --entrypoint /usr/local/bin/plugins aksw/fuseki-plus:6.0.0 list
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.0.0 list
 ```
 
 Check plugin status:
 ```bash
-docker run --rm --entrypoint /usr/local/bin/plugins aksw/fuseki-plus:6.0.0 status
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.0.0 status
 ```
 
-With docker compose:
+With docker compose (replace `fuseki-service` with your actual service name):
 ```bash
-docker compose exec --entrypoint /usr/local/bin/plugins fuseki list
+docker compose exec fuseki-service plugins list
 ```
 
 Add a plugin from URL:
 ```bash
-docker compose exec --entrypoint /usr/local/bin/plugins fuseki add https://example.com/plugin-1.0.0.jar
+docker compose exec fuseki-service plugins add https://example.com/plugin-1.0.0.jar
 ```
 
 Enable a plugin (activates it):
 ```bash
-docker compose exec --entrypoint /usr/local/bin/plugins fuseki enable jena-exectracker-0.7.0.jar
+docker compose exec fuseki-service plugins enable jena-exectracker-0.7.0.jar
 ```
 
 Disable a plugin:
 ```bash
-docker compose exec --entrypoint /usr/local/bin/plugins fuseki disable jena-exectracker-0.7.0.jar
+docker compose exec fuseki-service plugins disable jena-exectracker-0.7.0.jar
 ```
 
 Remove a plugin:
 ```bash
-docker compose exec --entrypoint /usr/local/bin/plugins fuseki remove jena-exectracker-0.7.0.jar
+docker compose exec fuseki-service plugins remove jena-exectracker-0.7.0.jar
 ```
 
 ## Directory Structure
@@ -96,6 +96,12 @@ Commands:
 Image tag format: `aksw/fuseki-plus:<fuseki-version>`
 
 Current version: **6.0.0**
+
+## Requirements
+
+- Docker
+- [bats](https://github.com/bats-core/bats-core) (install via `sudo apt install bats`)
+- [bats-assert](https://github.com/bats-core/bats-assert) and [bats-file](https://github.com/bats-core/bats-file) — vendored in `tests/vendor/`
 
 ## License
 
