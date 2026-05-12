@@ -100,8 +100,7 @@ Current version: **6.0.0**
 ## Requirements
 
 - Docker
-- [bats](https://github.com/bats-core/bats-core) (install via `sudo apt install bats`)
-- [bats-assert](https://github.com/bats-core/bats-assert) and [bats-file](https://github.com/bats-core/bats-file) — vendored in `tests/vendor/`
+- [bats](https://github.com/bats-core/bats-core) and [bats-assert](https://github.com/bats-core/bats-assert) (install via `sudo apt install bats bats-assert`)
 
 ## License
 

@@ -1,0 +1,27 @@
+
+# This file was manually created with `graphql4sparql schemagen mona-lisa.ttl --no-meta`
+
+type Person @uri(value: "http://xmlns.com/foaf/0.1/Person") {
+  uri: Scalar @to
+  topic_interest: Work @uri(value: "http://xmlns.com/foaf/0.1/topic_interest")
+  knows: Untyped @uri(value: "http://xmlns.com/foaf/0.1/knows")
+  birthDate: Scalar @uri(value: "http://schema.org/birthDate")
+  type: Untyped @uri(value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+}
+
+type Work @uri(value: "http://dbpedia.org/ontology/Work") {
+  uri: Scalar @to
+  creator: Untyped @uri(value: "http://purl.org/dc/terms/creator")
+  title: Scalar @uri(value: "http://purl.org/dc/terms/title")
+  type: Untyped @uri(value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+}
+
+type Untyped {
+  uri: Scalar @to
+}
+
+type Query {
+  Person: [Person]
+  Work: [Work]
+  Untyped: [Untyped]
+}

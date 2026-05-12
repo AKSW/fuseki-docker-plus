@@ -1,0 +1,13 @@
+services:
+  fuseki:
+    image: aksw/fuseki-plus:6.0.0
+    user: "${APP_UID}:${APP_GID}"
+    volumes:
+      - ./run:/app/fuseki/run
+    restart: "no"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -s -o /dev/null -w '%{http_code}' 'http://localhost:3030/test' --data-urlencode 'query=SELECT * { ?s a ?o } LIMIT 1' | grep -q '^200$'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
