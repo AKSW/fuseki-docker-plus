@@ -9,6 +9,8 @@ a simple plugin manager for self contained plugin JARs.
 - Pre-installed plugins in `/app/fuseki/plugins/`:
   - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.0)
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
+  - [jenax-arq-plugins](https://github.com/Scaseco/jenax) (v6.0.0-1)
+  - [jenax-serviceenhancer](https://github.com/Scaseco/jenax) (v6.0.0-1)
 - Plugin management via CLI: `plugins`
 - Dynamic plugin installation from URLs
 - Volume-based plugin persistence
