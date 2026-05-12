@@ -14,6 +14,8 @@ services:
     volumes:
       - ./run:/app/fuseki/run
       - ./resources:/app/fuseki/run/resources
+      - ./config.ttl:/app/fuseki/run/config.ttl
+      - ./passwd.txt:/app/fuseki/run/passwd.txt
       - ./example.service.ttl:/app/fuseki/run/configuration/example.service.ttl
       - /var/run/docker.sock:/var/run/docker.sock
     # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme

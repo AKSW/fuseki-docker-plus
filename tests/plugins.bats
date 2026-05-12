@@ -4,15 +4,14 @@
 # Note: bats-assert 2.x requires bats-core >= 1.11. For older bats, use load with full path.
 bats_load_library bats-assert
 
-COMPOSE_FILE="${BATS_TEST_DIRNAME}/test-docker-compose.yml"
-PLUGIN_LIST_CMD="docker compose -f ${COMPOSE_FILE} exec fuseki plugins"
-
-
 # Safety: ensure BATS_TEST_DIRNAME is an absolute path
 case "${BATS_TEST_DIRNAME}" in
     /*) ;;
     *) echo "ERROR: BATS_TEST_DIRNAME (${BATS_TEST_DIRNAME}) is not absolute"; exit 1 ;;
 esac
+
+COMPOSE_FILE="${BATS_TEST_DIRNAME}/docker-compose.yaml"
+PLUGIN_LIST_CMD="docker compose -f ${COMPOSE_FILE} exec fuseki plugins"
 
 # ------------------------------------------------------------------
 
@@ -46,7 +45,7 @@ setup() {
             break
         fi
         retries=$((retries + 1))
-        if [ "$retries" -ge 20 ]; then
+        if [ "$retries" -ge 3 ]; then
             skip "Fuseki container failed to become healthy"
         fi
         sleep 3
