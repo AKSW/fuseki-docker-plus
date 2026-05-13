@@ -1,4 +1,4 @@
-FROM aksw/fuseki-vanilla:6.0.0
+FROM aksw/fuseki-vanilla:6.1.0
 
 # Install curl for downloading plugins
 RUN apt-get update && apt-get install -y --no-install-recommends curl \

@@ -1,0 +1,30 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX schema: <http://schema.org/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX eg: <http://www.example.org/>
+
+eg:hasInterest
+  a rdfs:Property ;
+  rdfs:label "hasInterest" ;
+  rdfs:comment "A generic property indicating that a person has an interest in something" ;
+  rdfs:domain foaf:Agent ;
+  rdfs:range rdfs:Resource .
+
+eg:interest
+  a rdfs:Property ;
+  rdfs:label "interest" ;
+  rdfs:comment "A thing of interest to this person (subproperty of hasInterest)" ;
+  rdfs:domain foaf:Agent ;
+  rdfs:range rdfs:Resource ;
+  rdfs:subPropertyOf eg:hasInterest .
+
+eg:topicInterest
+  a rdfs:Property ;
+  rdfs:label "topicInterest" ;
+  rdfs:comment "A thing (topic) of interest (subproperty of hasInterest)" ;
+  rdfs:domain foaf:Agent ;
+  rdfs:range rdfs:Resource ;
+  rdfs:subPropertyOf eg:hasInterest .

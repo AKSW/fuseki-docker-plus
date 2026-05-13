@@ -2,12 +2,11 @@
 
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.0.0
-    init: true
+    image: aksw/fuseki-plus:6.1.0
     user: "${APP_UID}:${APP_GID}"
     environment:
-      - JVM_ARGS=-Xmx16G -XX:ReplayDataFile=/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/run/log/fuseki_derby.log
-      - JAVA_OPTIONS=-Xmx16G -XX:ReplayDataFile=/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/run/log/fuseki_derby.log
+      #- JVM_ARGS=-Xmx16G -XX:ReplayDataFile=/app/fuseki/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/app/fuseki/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/app/fuseki/run/logs/fuseki_derby.log
+      - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/app/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector
       - FUSEKI_BASE=/app/fuseki/run
     group_add:
       - "${DOCKER_GID}"
@@ -21,13 +20,13 @@ services:
     # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme
     # working_dir: /data/coypu
     ports:
-      - 3032:3030
+      - 3030:3030
       - 5005:5005
     restart: unless-stopped
     # network_mode: host
-    networks:
-      - coypu-net-staging
+    # networks:
+    #  - net
 
-networks:
-  coypu-net-staging:
+#networks:
+#  net:
 

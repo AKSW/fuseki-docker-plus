@@ -35,16 +35,6 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
   ] ;
   fuseki:endpoint [
     fuseki:name "tracker" ;
-    fuseki:operation fuseki:tracker ;
-    ja:context [ ja:cxtName "allowAbort" ; ja:cxtValue false ] ;
-  ] ;
-  fuseki:endpoint [
-    fuseki:name "admin-tracker" ;
-    fuseki:operation fuseki:tracker ;
-    fuseki:allowedUsers "test" ;
-  ] ;
-  fuseki:endpoint [
-    fuseki:name "tracker" ;
     fuseki:operation jetf:exectracker ;
     ja:context [ ] ;
   ] ;
@@ -52,7 +42,7 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
     fuseki:name "admin-tracker" ;
     fuseki:operation jetf:exectracker ;
     ja:context [
-      ja:cxtName "https://w3id.org/aksw/jena/exectracker/fuseki#allowAbort" ;
+      ja:cxtName jetf:allowAbort ;
       ja:cxtValue true ;
     ];
     fuseki:allowedUsers "test" ;
@@ -83,13 +73,13 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
 
 <#pluginDS2>
   a jxp:DatasetRDFSEnabled ;
-  ja:rdfsSchema "/app/fuseki/run/resources/_merged_ontology.ttl" ;
+  ja:rdfsSchema "/app/fuseki/run/resources/ontology.rdfs.ttl" ;
   ja:dataset <#pluginDS3> .
 
 <#pluginDS3> a se:DatasetServiceEnhancer ;
-    se:cacheMaxEntryCount 10000 ;
-    ja:baseDataset
-        <#geoDS> .
+  se:cacheMaxEntryCount 10000 ;
+  ja:dataset <#geoDS> ;
+  .
 
 <#geoDS> rdf:type geosparql:GeosparqlDataset ;
   geosparql:spatialIndexFile     "/app/fuseki/run/databases/tdb2/example/spatial.index";
@@ -130,9 +120,9 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
   ) ;
   .
 
-<#baseDS> rdf:type      ja:RDFDataset ;
-  ja:defaultGraph <#graph> ;
-  .
+#<#baseDS> rdf:type      ja:RDFDataset ;
+#  ja:defaultGraph <#graph> ;
+#  .
 
 #<#graph> rdf:type ja:MemoryModel ;
 #  ja:content [
@@ -142,9 +132,9 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
 
 <#baseDS> rdf:type tdb2:DatasetTDB2 ;
   tdb2:location "/app/fuseki/run/databases/tdb2/example/" ;
-  ja:content [
-    ja:externalContent <file:../resources/mona-lisa.ttl> ;
-  ] ;
+  #ja:content [
+  #  ja:externalContent <file:../resources/mona-lisa.ttl> ;
+  #] ;
   ### tdb2:unionDefaultGraph true ;
   ### tdb2:unionDefaultGraph false ;
   .
