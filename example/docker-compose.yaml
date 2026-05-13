@@ -2,7 +2,7 @@
 
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.1.0
+    image: aksw/fuseki-plus:6.1.0-rc1
     user: "${APP_UID}:${APP_GID}"
     environment:
       #- JVM_ARGS=-Xmx16G -XX:ReplayDataFile=/app/fuseki/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/app/fuseki/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/app/fuseki/run/logs/fuseki_derby.log
