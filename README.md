@@ -5,12 +5,12 @@ a simple plugin manager for self contained plugin JARs.
 
 ## Features
 
-- Base: [aksw/fuseki-vanilla:6.0.0](https://github.com/AKSW/docker-fuseki-vanilla)
+- Base: [aksw/fuseki-vanilla:6.1.0](https://github.com/AKSW/docker-fuseki-vanilla)
 - Pre-installed plugins in `/app/fuseki/plugins/`:
   - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.0)
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
-  - [jenax-arq-plugins](https://github.com/Scaseco/jenax) (v6.0.0-1)
-  - [jenax-serviceenhancer](https://github.com/Scaseco/jenax) (v6.0.0-1)
+  - [jenax-arq-plugins](https://github.com/Scaseco/jenax) (v6.1.0-1)
+  - [jenax-serviceenhancer](https://github.com/Scaseco/jenax) (v6.1.0-1)
 - Plugin management via CLI: `plugins`
 - Dynamic plugin installation from URLs
 - Volume-based plugin persistence
@@ -20,7 +20,7 @@ a simple plugin manager for self contained plugin JARs.
 ### Build the Image
 
 ```bash
-docker build -t aksw/fuseki-plus:6.0.0 .
+docker build -t aksw/fuseki-plus:6.1.0-rc1 .
 ```
 
 ### Run with Docker Compose
@@ -47,6 +47,7 @@ docker compose run --rm --entrypoint plugins fuseki enable jena-exectracker-0.7.
 docker compose run --rm --entrypoint plugins fuseki disable jena-exectracker-0.7.0.jar
 docker compose run --rm --entrypoint plugins fuseki remove jena-exectracker-0.7.0.jar
 ```
+```
 
 **Alternative:** Create a `.env` file in the same directory as `docker-compose.yaml`:
 ```bash
@@ -60,6 +61,14 @@ After creating the `.env` file, you can run without exports:
 docker compose run --rm --entrypoint plugins fuseki list
 ```
 
+### Using the dc Wrapper Script
+
+The `example/` folder includes a `dc` wrapper script for simplified docker compose commands:
+
+### Using the dc Wrapper Script
+
+The `example/` folder includes a `dc` wrapper script for simplified docker compose commands:
+
 **Alternative:** Use the `dc` wrapper script (from the `example` folder):
 ```bash
 ./dc plugins list
@@ -69,16 +78,29 @@ docker compose run --rm --entrypoint plugins fuseki list
 
 Replace `fuseki` with your actual service name if different.
 
+### Using the dc Wrapper Script
+
+The `example/` folder includes a `dc` wrapper script for simplified docker compose commands:
+
+### Using the dc Wrapper Script
+
+The `example/` folder includes a `dc` wrapper script for simplified docker compose commands:
+```bash
+./dc plugins list
+./dc plugins status
+./dc plugins add https://example.com/plugin-1.0.0.jar
+```
+
 ### Plain Docker Usage
 
 List available plugins:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.0.0 list
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-rc1 list
 ```
 
 Check plugin status:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.0.0 status
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-rc1 status
 ```
 
 With docker compose (replace `fuseki` with your actual service name):
@@ -133,7 +155,9 @@ Commands:
 
 Image tag format: `aksw/fuseki-plus:<fuseki-version>`
 
-Current version: **6.0.0**
+Current version: **6.1.0-rc1** (Jena 6.1.0)
+
+Release tag: `aksw/fuseki-plus:6.1.0-rc1`
 
 ## Requirements
 

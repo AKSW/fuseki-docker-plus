@@ -1,6 +1,6 @@
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.0.0
+    image: aksw/fuseki-plus:6.1.0-rc1
     user: "${APP_UID}:${APP_GID}"
     environment:
       - FUSEKI_BASE=/app/fuseki/run
