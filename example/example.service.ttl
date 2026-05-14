@@ -29,8 +29,13 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
     fuseki:allowedUsers "test" ;
   ] ;
   fuseki:endpoint [
-    fuseki:operation fuseki:gsp_rw ; 
     fuseki:name "data" ;
+    fuseki:operation fuseki:gsp_rw ;
+    fuseki:allowedUsers "test" ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "patch" ;
+    fuseki:operation fuseki:patch ;
     fuseki:allowedUsers "test" ;
   ] ;
   fuseki:endpoint [
