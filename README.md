@@ -5,7 +5,7 @@ a simple plugin manager for self contained plugin JARs.
 
 ## Features
 
-- Base: [aksw/fuseki-vanilla:6.1.0](https://github.com/AKSW/docker-fuseki-vanilla)
+- Base: [aksw/fuseki-vanilla:6.1.0](https://github.com/AKSW/fuseki-docker-vanilla)
 - Pre-installed plugins in `/app/fuseki/plugins/`:
   - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.0)
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
