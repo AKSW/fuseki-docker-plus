@@ -34,6 +34,11 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
     fuseki:allowedUsers "test" ;
   ] ;
   fuseki:endpoint [
+    fuseki:name "get" ;
+    fuseki:operation fuseki:gsp_r ;
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "600000" ] ;
+  ] ;
+  fuseki:endpoint [
     fuseki:name "patch" ;
     fuseki:operation fuseki:patch ;
     fuseki:allowedUsers "test" ;
