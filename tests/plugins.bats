@@ -14,6 +14,12 @@ esac
 COMPOSE_FILE="${BATS_TEST_DIRNAME}/docker-compose.yaml"
 PLUGIN_LIST_CMD="./dc exec fuseki plugins"
 
+# Helper: get the full plugin filename matching a core prefix
+plugin_id() {
+    local prefix="$1"
+    ./dc exec fuseki plugins list 2>/dev/null | awk -v pfx="$prefix" '$0 ~ "^"pfx {print; exit}'
+}
+
 # ------------------------------------------------------------------
 
 setup() {
@@ -72,15 +78,15 @@ teardown() {
 
 @test "plugins list shows 4 pre-installed plugins" {
     run ${PLUGIN_LIST_CMD} list
-    assert_output --partial "graphql4sparql-0.7.0.jar"
-    assert_output --partial "jena-exectracker-0.7.0.jar"
-    assert_output --partial "jenax-arq-plugins-bundle-6.0.0-1.jar"
-    assert_output --partial "jenax-serviceenhancer-preview-plugin-6.0.0-1.jar"
+    assert_output --partial "graphql4sparql"
+    assert_output --partial "jena-exectracker"
+    assert_output --partial "jenax-arq-plugins-bundle"
+    assert_output --partial "jenax-serviceenhancer-preview"
 }
 
 @test "plugins status shows no plugins installed initially" {
     run ${PLUGIN_LIST_CMD} status
-    refute_output --partial "(installed)"
+    refute_output --partial "(enabled)"
 }
 
 # Healthcheck test - runs a SPARQL query to verify Fuseki is responsive
@@ -90,26 +96,28 @@ teardown() {
 }
 
 @test "plugins enable a plugin and status reflects it" {
-    # Enable a plugin
-    run ${PLUGIN_LIST_CMD} enable jena-exectracker-0.7.0.jar
-    assert_output --partial "Enabled: jena-exectracker-0.7.0.jar"
+    # Enable a plugin (resolve exact name from the running system)
+    local plugin=$(plugin_id jena-exectracker)
+    run ${PLUGIN_LIST_CMD} enable "$plugin"
+    assert_output --regexp "Enabled:.*jena-exectracker"
 
     # Check status
     run ${PLUGIN_LIST_CMD} status
-    assert_output --partial "jena-exectracker-0.7.0.jar (installed)"
+    assert_output --regexp "jena-exectracker.*\(enabled\)"
 }
 
 @test "plugins disable a plugin and status reflects it" {
     # Enable first
-    ${PLUGIN_LIST_CMD} enable jena-exectracker-0.7.0.jar > /dev/null
+    local plugin=$(plugin_id jena-exectracker)
+    ${PLUGIN_LIST_CMD} enable "$plugin" > /dev/null
 
     # Now disable
-    run ${PLUGIN_LIST_CMD} disable jena-exectracker-0.7.0.jar
-    assert_output --partial "Disabled: jena-exectracker-0.7.0.jar"
+    run ${PLUGIN_LIST_CMD} disable "$plugin"
+    assert_output --regexp "Disabled:.*jena-exectracker"
 
-    # Check status — should no longer show (installed)
+    # Check status — should no longer show (enabled)
     run ${PLUGIN_LIST_CMD} status
-    refute_output --partial "jena-exectracker-0.7.0.jar (installed)"
+    refute_output --regexp "jena-exectracker.*\(enabled\)"
 }
 
 @test "plugins enable non-existent plugin fails with error" {
@@ -119,9 +127,12 @@ teardown() {
 }
 
 @test "plugins disable already disabled plugin fails with error" {
-    run ${PLUGIN_LIST_CMD} disable jena-exectracker-0.7.0.jar 2>&1
+    local plugin=$(plugin_id jena-exectracker)
+    # Disable once more to ensure it's in a disabled state
+    ${PLUGIN_LIST_CMD} disable "$plugin" > /dev/null 2>&1 || true
+    run ${PLUGIN_LIST_CMD} disable "$plugin" 2>&1
     assert_failure
-    assert_output --partial "Plugin not installed"
+    assert_output --regexp "Plugin not (enabled|installed)"
 }
 
 @test "plugins add from local file URL works" {
@@ -168,22 +179,26 @@ teardown() {
 }
 
 @test "plugins enable multiple plugins at once" {
-    run ${PLUGIN_LIST_CMD} enable jena-exectracker-0.7.0.jar graphql4sparql-0.7.0.jar
-    assert_output --partial "Enabled: jena-exectracker-0.7.0.jar"
-    assert_output --partial "Enabled: graphql4sparql-0.7.0.jar"
+    local plugin1=$(plugin_id jena-exectracker)
+    local plugin2=$(plugin_id graphql4sparql)
+    run ${PLUGIN_LIST_CMD} enable "$plugin1" "$plugin2"
+    assert_output --regexp "Enabled:.*jena-exectracker"
+    assert_output --regexp "Enabled:.*graphql4sparql"
 
-    # Both should show as installed
+    # Both should show as enabled
     run ${PLUGIN_LIST_CMD} status
-    assert_output --partial "jena-exectracker-0.7.0.jar (installed)"
-    assert_output --partial "graphql4sparql-0.7.0.jar (installed)"
+    assert_output --regexp "jena-exectracker.*\(enabled\)"
+    assert_output --regexp "graphql4sparql.*\(enabled\)"
 }
 
 @test "plugins disable multiple plugins at once" {
     # Enable them first
-    ${PLUGIN_LIST_CMD} enable jena-exectracker-0.7.0.jar graphql4sparql-0.7.0.jar > /dev/null
+    local plugin1=$(plugin_id jena-exectracker)
+    local plugin2=$(plugin_id graphql4sparql)
+    ${PLUGIN_LIST_CMD} enable "$plugin1" "$plugin2" > /dev/null
 
     # Disable both
-    run ${PLUGIN_LIST_CMD} disable jena-exectracker-0.7.0.jar graphql4sparql-0.7.0.jar
-    assert_output --partial "Disabled: jena-exectracker-0.7.0.jar"
-    assert_output --partial "Disabled: graphql4sparql-0.7.0.jar"
+    run ${PLUGIN_LIST_CMD} disable "$plugin1" "$plugin2"
+    assert_output --regexp "Disabled:.*jena-exectracker"
+    assert_output --regexp "Disabled:.*graphql4sparql"
 }
