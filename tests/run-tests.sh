@@ -11,6 +11,9 @@ export APP_GID=$(id -g)
 # Export bats-assert library path for bats_load_library
 export BATS_LIB_PATH="/usr/lib/bats"
 
+# Image name (override with IMAGE='foobar' ./run-tests.sh)
+IMAGE="${IMAGE:-fuseki-plus:6.1.0}"
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -44,10 +47,10 @@ if [ ! -f "${BATS_LIB_PATH}/bats-assert/load.bash" ]; then
 fi
 
 # Ensure image exists
-echo -n "Checking image aksw/fuseki-plus:6.0.0 ... "
-if ! docker image inspect aksw/fuseki-plus:6.0.0 &>/dev/null; then
+echo -n "Checking image $IMAGE ... "
+if ! docker image inspect "$IMAGE" &>/dev/null; then
     echo -e "${YELLOW}not found, building...${NC}"
-    docker build -t aksw/fuseki-plus:6.0.0 "$SCRIPT_DIR/.."
+    docker build -t "$IMAGE" "$SCRIPT_DIR/.."
 else
     echo -e "${GREEN}found${NC}"
 fi

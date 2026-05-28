@@ -62,7 +62,7 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
     fuseki:operation g4sf:query ;
     ja:context [
       ja:cxtName "https://w3id.org/aksw/graphql4sparql/fuseki#schemaFile" ;
-      ja:cxtValue "/app/fuseki/run/resources/mona-lisa.graphql" ;
+      ja:cxtValue "/fuseki/run/resources/mona-lisa.graphql" ;
     ];
     ja:context [
       ja:cxtName "https://w3id.org/aksw/graphql4sparql/fuseki#sparqlQueryEndpoint" ;
@@ -83,7 +83,7 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
 
 <#pluginDS2>
   a jxp:DatasetRDFSEnabled ;
-  ja:rdfsSchema "/app/fuseki/run/resources/ontology.rdfs.ttl" ;
+  ja:rdfsSchema "/fuseki/run/resources/ontology.rdfs.ttl" ;
   ja:dataset <#pluginDS3> .
 
 <#pluginDS3> a se:DatasetServiceEnhancer ;
@@ -92,7 +92,7 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
   .
 
 <#geoDS> rdf:type geosparql:GeosparqlDataset ;
-  geosparql:spatialIndexFile     "/app/fuseki/run/databases/tdb2/example/spatial.index";
+  geosparql:spatialIndexFile     "/fuseki/run/databases/tdb2/example/spatial.index";
   geosparql:inference            false ;
   geosparql:queryRewrite         true ;
   geosparql:indexEnabled         true ;
@@ -141,7 +141,7 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
 #  .
 
 <#baseDS> rdf:type tdb2:DatasetTDB2 ;
-  tdb2:location "/app/fuseki/run/databases/tdb2/example/" ;
+  tdb2:location "/fuseki/run/databases/tdb2/example/" ;
   #ja:content [
   #  ja:externalContent <file:../resources/mona-lisa.ttl> ;
   #] ;

@@ -2,6 +2,7 @@
 
 # Uses system bats-assert (installed via: sudo apt install bats bats-assert)
 # Note: bats-assert 2.x requires bats-core >= 1.11. For older bats, use load with full path.
+bats_load_library bats-support
 bats_load_library bats-assert
 
 # Safety: ensure BATS_TEST_DIRNAME is an absolute path
@@ -125,7 +126,7 @@ teardown() {
 
 @test "plugins add from local file URL works" {
     # Add the local plugin using a file:// URL accessible inside the container
-    local local_plugin_url="file:///app/fuseki/run/test-plugins/local-plugin.jar"
+    local local_plugin_url="file:///fuseki/run/test-plugins/local-plugin.jar"
     run ${PLUGIN_LIST_CMD} add "${local_plugin_url}"
     assert_output --partial "Added: local-plugin.jar"
 
@@ -136,7 +137,7 @@ teardown() {
 
 @test "plugins remove a plugin" {
     # First add it
-    local local_plugin_url="file:///app/fuseki/run/test-plugins/local-plugin.jar"
+    local local_plugin_url="file:///fuseki/run/test-plugins/local-plugin.jar"
     ${PLUGIN_LIST_CMD} add "${local_plugin_url}" > /dev/null
 
     # Remove it

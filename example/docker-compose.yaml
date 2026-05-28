@@ -5,17 +5,17 @@ services:
     image: aksw/fuseki-plus:6.1.0-rc1
     user: "${APP_UID}:${APP_GID}"
     environment:
-      #- JVM_ARGS=-Xmx16G -XX:ReplayDataFile=/app/fuseki/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/app/fuseki/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/app/fuseki/run/logs/fuseki_derby.log
-      - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/app/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector
-      - FUSEKI_BASE=/app/fuseki/run
+      #- JVM_ARGS=-Xmx16G -XX:ReplayDataFile=/fuseki/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/fuseki/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log
+      - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector
+      - FUSEKI_BASE=/fuseki/run
     group_add:
       - "${DOCKER_GID}"
     volumes:
-      - ./run:/app/fuseki/run
-      - ./resources:/app/fuseki/run/resources
-      - ./config.ttl:/app/fuseki/run/config.ttl
-      - ./passwd.txt:/app/fuseki/run/passwd.txt
-      - ./example.service.ttl:/app/fuseki/run/configuration/example.service.ttl
+      - ./run:/fuseki/run
+      - ./resources:/fuseki/run/resources
+      - ./config.ttl:/fuseki/run/config.ttl
+      - ./passwd.txt:/fuseki/run/passwd.txt
+      - ./example.service.ttl:/fuseki/run/configuration/example.service.ttl
       - /var/run/docker.sock:/var/run/docker.sock
     # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme
     # working_dir: /data/coypu

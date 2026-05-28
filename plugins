@@ -1,31 +1,34 @@
 #!/bin/bash
 set -e
 
-PLUGINS_DIR="/app/fuseki/builtin-plugins"
-RUN_PLUGINS_DIR="/app/fuseki/run/plugins"
-EXTRA_DIR="/app/fuseki/run/extra"
+[[ -n "${FUSEKI_HOME:-}" ]] || { echo "Error: FUSEKI_HOME is not set" >&2; exit 1; }
+[[ -n "${FUSEKI_BASE:-}" ]] || { echo "Error: FUSEKI_BASE is not set" >&2; exit 1; }
+
+BUILTIN_PLUGINS="${FUSEKI_BUILTIN_PLUGINS:-${FUSEKI_HOME}/builtin-plugins}"
+USER_PLUGINS="${FUSEKI_USER_PLUGINS:-${FUSEKI_BASE}/plugins}"
+EXTRA_DIR="${FUSEKI_BASE}/extra"
 
 # Ensure directories exist
-mkdir -p "$PLUGINS_DIR" "$RUN_PLUGINS_DIR" "$EXTRA_DIR"
+mkdir -p "$BUILTIN_PLUGINS" "$USER_PLUGINS" "$EXTRA_DIR"
 
 # Get all available plugin filenames
 get_available_plugins() {
     local files=()
-    if [[ -d "$PLUGINS_DIR" ]]; then
-        for f in "$PLUGINS_DIR"/*.jar; do
+    if [[ -d "$BUILTIN_PLUGINS" ]]; then
+        for f in "$BUILTIN_PLUGINS"/*.jar; do
             [[ -e "$f" ]] && files+=("$(basename "$f")")
         done
     fi
-    if [[ -d "$RUN_PLUGINS_DIR" ]]; then
-        for f in "$RUN_PLUGINS_DIR"/*.jar; do
+    if [[ -d "$USER_PLUGINS" ]]; then
+        for f in "$USER_PLUGINS"/*.jar; do
             [[ -e "$f" ]] && files+=("$(basename "$f")")
         done
     fi
     printf '%s\n' "${files[@]}" | sort -u
 }
 
-# Check if plugin is installed (exists in EXTRA_DIR)
-is_installed() {
+# Check if plugin is enabled (exists in EXTRA_DIR)
+is_enabled() {
     local plugin="$1"
     [[ -f "$EXTRA_DIR/$plugin" ]]
 }
@@ -33,7 +36,7 @@ is_installed() {
 # Check if plugin exists in either plugins directory
 plugin_exists() {
     local plugin="$1"
-    [[ -f "$PLUGINS_DIR/$plugin" ]] || [[ -f "$RUN_PLUGINS_DIR/$plugin" ]]
+    [[ -f "$BUILTIN_PLUGINS/$plugin" ]] || [[ -f "$USER_PLUGINS/$plugin" ]]
 }
 
 # List available plugins (filenames only)
@@ -52,8 +55,8 @@ cmd_status() {
     fi
     
     echo "$plugins" | while read -r plugin; do
-        if is_installed "$plugin"; then
-            echo "$plugin (installed)"
+        if is_enabled "$plugin"; then
+            echo "$plugin (enabled)"
         else
             echo "$plugin"
         fi
@@ -81,21 +84,21 @@ cmd_add() {
     filename=$(basename "$url")
     
     # Check if file already exists
-    if [[ -f "$RUN_PLUGINS_DIR/$filename" ]]; then
+    if [[ -f "$USER_PLUGINS/$filename" ]]; then
         echo "Error: Plugin already exists: $filename" >&2
         exit 1
     fi
     
     echo "Downloading $filename..."
-    if ! curl -L --proto =https,http,file -o "$RUN_PLUGINS_DIR/$filename" "$url"; then
+    if ! curl -L --proto =https,http,file -o "$USER_PLUGINS/$filename" "$url"; then
         echo "Error: Download failed for $url" >&2
-        rm -f "$RUN_PLUGINS_DIR/$filename"
+        rm -f "$USER_PLUGINS/$filename"
         exit 1
     fi
     
-    if [ ! -s "$RUN_PLUGINS_DIR/$filename" ]; then
+    if [ ! -s "$USER_PLUGINS/$filename" ]; then
         echo "Error: Downloaded file is empty" >&2
-        rm -f "$RUN_PLUGINS_DIR/$filename"
+        rm -f "$USER_PLUGINS/$filename"
         exit 1
     fi
     
@@ -123,8 +126,8 @@ cmd_remove() {
     # Remove from both locations
     for plugin in "${plugins[@]}"; do
         local removed=0
-        if [[ -f "$RUN_PLUGINS_DIR/$plugin" ]]; then
-            rm "$RUN_PLUGINS_DIR/$plugin"
+        if [[ -f "$USER_PLUGINS/$plugin" ]]; then
+            rm "$USER_PLUGINS/$plugin"
             removed=1
         fi
         if [[ -f "$EXTRA_DIR/$plugin" ]]; then
@@ -158,10 +161,10 @@ cmd_enable() {
     # Copy to extra directory
     for plugin in "${plugins[@]}"; do
         local source
-        if [[ -f "$RUN_PLUGINS_DIR/$plugin" ]]; then
-            source="$RUN_PLUGINS_DIR/$plugin"
+        if [[ -f "$USER_PLUGINS/$plugin" ]]; then
+            source="$USER_PLUGINS/$plugin"
         else
-            source="$PLUGINS_DIR/$plugin"
+            source="$BUILTIN_PLUGINS/$plugin"
         fi
         cp "$source" "$EXTRA_DIR/$plugin"
         echo "Enabled: $plugin"
@@ -178,10 +181,10 @@ cmd_disable() {
         exit 1
     fi
     
-    # Validate all plugins are installed first
+    # Validate all plugins are enabled first
     for plugin in "${plugins[@]}"; do
-        if ! is_installed "$plugin"; then
-            echo "Error: Plugin not installed: $plugin" >&2
+        if ! is_enabled "$plugin"; then
+            echo "Error: Plugin not enabled: $plugin" >&2
             exit 1
         fi
     done
@@ -200,11 +203,11 @@ Usage: plugins <command> [options]
 
 Commands:
   list              List available plugins
-  status            List all plugins with installation status
-  add <url>         Download plugin from URL to /app/fuseki/run/plugins/
-  remove <name>     Remove plugin from /app/fuseki/run/plugins/ and /app/fuseki/run/extra/
-  enable <names>    Copy plugin(s) to /app/fuseki/run/extra/ (activate)
-  disable <names>   Remove plugin(s) from /app/fuseki/run/extra/ (deactivate)
+  status            List all plugins with activation status
+  add <url>         Download plugin from URL to ${USER_PLUGINS}
+  remove <name>     Remove plugin from ${USER_PLUGINS} and ${EXTRA_DIR}
+  enable <names>    Copy plugin(s) to ${EXTRA_DIR} (activate)
+  disable <names>   Remove plugin(s) from ${EXTRA_DIR} (deactivate)
 
 Examples:
   plugins list

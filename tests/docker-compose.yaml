@@ -1,14 +1,14 @@
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.1.0-rc1
+    image: aksw/fuseki-plus:6.1.0
     user: "${APP_UID}:${APP_GID}"
     environment:
-      - FUSEKI_BASE=/app/fuseki/run
+      - FUSEKI_BASE=/fuseki/run
     volumes:
-      - ./run:/app/fuseki/run:rw
-      - ./config.ttl:/app/fuseki/run/config.ttl
-      - ./test.service.ttl:/app/fuseki/run/configuration/test.service.ttl
-      - ./local-plugin.jar:/app/fuseki/run/test-plugins/local-plugin.jar
+      - ./run:/fuseki/run:rw
+      - ./config.ttl:/fuseki/run/config.ttl
+      - ./test.service.ttl:/fuseki/run/configuration/test.service.ttl
+      - ./local-plugin.jar:/fuseki/run/test-plugins/local-plugin.jar
       # - /var/run/docker.sock:/var/run/docker.sock
     restart: "no"
     healthcheck:
