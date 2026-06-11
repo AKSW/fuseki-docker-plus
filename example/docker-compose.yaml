@@ -2,14 +2,15 @@
 
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.1.0-rc1
+    image: aksw/fuseki-plus:6.1.0-2
     user: "${APP_UID}:${APP_GID}"
     environment:
-      #- JVM_ARGS=-Xmx16G -XX:ReplayDataFile=/fuseki/run/log/fuseki_replay_pid%p.log -XX:ErrorFile=/fuseki/run/log/fuseki_hs_err_pid%p.log -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log
+      # Adjust memory usage to your needs!
       - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector
       - FUSEKI_BASE=/fuseki/run
-    group_add:
-      - "${DOCKER_GID}"
+    # group_add:
+      # - "${DOCKER_GID}" # Needed for plugins that control other containers, such as the Qlever Fuseki Plugin
+                          # In general, giving a container control over other containers poses a security risk!
     volumes:
       - ./run:/fuseki/run
       - ./resources:/fuseki/run/resources

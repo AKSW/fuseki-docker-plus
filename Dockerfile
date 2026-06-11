@@ -17,7 +17,7 @@ RUN mkdir -p ${FUSEKI_BUILTIN_PLUGINS} /usr/local/bin
 
 # Download pre-bundled plugins (exectracker, graphql4sparql, jenax-arq-plugins, jenax-serviceenhancer)
 RUN curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
-    "https://github.com/Scaseco/jena-exectracker/releases/download/v0.7.0/jena-exectracker-fuseki-plugin-0.7.0.jar" && \
+    "https://github.com/Scaseco/jena-exectracker/releases/download/v0.7.1/jena-exectracker-fuseki-plugin-0.7.1.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     "https://github.com/Scaseco/graphql4sparql/releases/download/v0.7.0/graphql4sparql-fuseki-plugin-0.7.0.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \

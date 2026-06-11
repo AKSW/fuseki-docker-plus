@@ -7,7 +7,7 @@ a simple plugin manager for self-contained plugin JARs.
 
 - Base: [aksw/fuseki-vanilla:6.1.0](https://github.com/AKSW/fuseki-docker-vanilla)
 - Pre-installed plugins in `/fuseki/builtin-plugins/`:
-  - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.0)
+  - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.1)
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
   - [jenax-arq-plugins](https://github.com/Scaseco/jenax) (v6.1.0-1)
   - [jenax-serviceenhancer](https://github.com/Scaseco/jenax) (v6.1.0-1)
@@ -20,7 +20,7 @@ a simple plugin manager for self-contained plugin JARs.
 ### Build the Image
 
 ```bash
-docker build -t aksw/fuseki-plus:6.1.0 .
+docker build -t aksw/fuseki-plus:6.1.0-2 .
 ```
 
 ### Run with Docker Compose
@@ -98,9 +98,16 @@ docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0 status
 
 Image tag format: `aksw/fuseki-plus:<fuseki-version>`
 
-Current version: **6.1.0** (Jena 6.1.0)
+Current version: **6.1.0-2** (based on Jena 6.1.0)
 
-Release tag: `aksw/fuseki-plus:6.1.0`
+Release tag: `aksw/fuseki-plus:6.1.0-2`
+
+
+| Version   | Changes |
+|-----------|---------|
+| 6.1.0-2   | Updated [ExecTracker Plugin](https://github.com/Scaseco/jena-exectracker/releases/tag/v0.7.1) which features a nicer UI |
+| 6.1.0     | Changed `FUSEKI_BASE` from  `/app/fuseki` to `/fuseki` |
+| 6.1.0-rc1 | Initial version |
 
 ## Requirements
 

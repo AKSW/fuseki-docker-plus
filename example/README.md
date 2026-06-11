@@ -7,8 +7,13 @@ In order for this complex example setup to work, you must enable *all* plugins b
 ./dc run --rm --entrypoint plugins fuseki list
 ```
 2. Enable *all* listing plugins.
+```
+./dc run --rm --entrypoint plugins fuseki enable $(./dc run --rm --entrypoint plugins fuseki list)
+```
+
+The command above effectively calls:
 ```bash
-./dc run --rm --entrypoint plugins fuseki add PLUGIN1 PLUGIN2 # ...
+./dc run --rm --entrypoint plugins fuseki enable PLUGIN1 PLUGIN2 # ...
 ```
 3. Start the server.
 ```bash

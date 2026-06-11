@@ -5,7 +5,7 @@ PREFIX owl:       <http://www.w3.org/2002/07/owl#>
 PREFIX ja:        <http://jena.hpl.hp.com/2005/11/Assembler#>
 
 <#server> a fuseki:Server ;
-  fuseki:passwd  "/app/fuseki/run/passwd.txt" ;
+  fuseki:passwd  "/fuseki/run/passwd.txt" ;
   fuseki:auth    "basic" ;
   .
 
