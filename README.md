@@ -1,7 +1,7 @@
 # fuseki-docker-plus
 
-Customized Apache Jena Fuseki Docker Image with Pre-installed Plugins and
-a simple plugin manager for self contained plugin JARs.
+Customized Apache Jena Fuseki Docker Image with pre-installed plugins and
+a simple plugin manager for self-contained plugin JARs.
 
 ## Features
 
