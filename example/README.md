@@ -6,7 +6,7 @@ In order for this complex example setup to work, you must enable *all* plugins b
 ```bash
 ./dc run --rm --entrypoint plugins fuseki list
 ```
-2. Enable *all* listing plugins.
+2. Enable *all* available plugins (those listed by the previous command).
 ```
 ./dc run --rm --entrypoint plugins fuseki enable $(./dc run --rm --entrypoint plugins fuseki list)
 ```
