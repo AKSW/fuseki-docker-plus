@@ -16,6 +16,7 @@ services:
       - ./resources:/fuseki/run/resources
       - ./config.ttl:/fuseki/run/config.ttl
       - ./passwd.txt:/fuseki/run/passwd.txt
+      - ./shiro.ini:/fuseki/run/shiro.ini
       - ./example.service.ttl:/fuseki/run/configuration/example.service.ttl
       - /var/run/docker.sock:/var/run/docker.sock
     # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme
