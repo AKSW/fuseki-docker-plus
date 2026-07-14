@@ -27,6 +27,22 @@ get_available_plugins() {
     printf '%s\n' "${files[@]}" | sort -u
 }
 
+# Get all plugins from /extra directory
+get_extra_plugins() {
+    local files=()
+    if [[ -d "$EXTRA_DIR" ]]; then
+        for f in "$EXTRA_DIR"/*.jar; do
+            [[ -e "$f" ]] && files+=("$(basename "$f")")
+        done
+    fi
+    printf '%s\n' "${files[@]}" | sort -u
+}
+
+# Get all plugins (available + extra)
+get_all_plugins() {
+    { get_available_plugins; get_extra_plugins; } | sort -u
+}
+
 # Check if plugin is enabled (exists in EXTRA_DIR)
 is_enabled() {
     local plugin="$1"
@@ -47,7 +63,7 @@ cmd_list() {
 # Show status of all plugins
 cmd_status() {
     local plugins
-    plugins=$(get_available_plugins)
+    plugins=$(get_all_plugins)
     
     if [[ -z "$plugins" ]]; then
         echo "No plugins available."
