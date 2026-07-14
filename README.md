@@ -13,6 +13,7 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
   - [jenax-arq-plugins](https://github.com/Scaseco/jenax) (v6.1.0-1)
   - [jenax-serviceenhancer](https://github.com/Scaseco/jenax) (v6.1.0-1)
+  - [Proxy Plugin](https://github.com/Scaseco/jena-proxy) (v0.7.0-rc1)
 - Plugin management via CLI: `plugins`
 - Dynamic plugin installation from URLs
 - Volume-based plugin persistence
@@ -79,12 +80,12 @@ The usage without compose is similar. Instead of the service name you need to sp
 
 List available plugins:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0 list
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-3 list
 ```
 
 Check plugin status:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0 status
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-3 status
 ```
 
 ## Directory Structure of a Container
