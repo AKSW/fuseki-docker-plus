@@ -1,0 +1,27 @@
+PREFIX fuseki:    <http://jena.apache.org/fuseki#>
+PREFIX rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:      <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:       <http://www.w3.org/2002/07/owl#>
+PREFIX tdb1:      <http://jena.hpl.hp.com/2008/tdb#>
+PREFIX tdb2:      <http://jena.apache.org/2016/tdb#>
+PREFIX ja:        <http://jena.hpl.hp.com/2005/11/Assembler#>
+
+PREFIX jds:       <https://w3id.org/aksw/jena/dataset#>
+
+<#service> rdf:type fuseki:Service ;
+  fuseki:name "proxy-dbpedia" ;
+  fuseki:endpoint [
+    fuseki:operation fuseki:query ;
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "600000" ] ;
+  ] ;
+  fuseki:endpoint [
+    fuseki:name "update" ;
+    fuseki:operation fuseki:update ;
+    fuseki:allowedUsers "test" ;
+  ] ;
+  fuseki:dataset <#proxyDS> .
+
+<#proxyDS> rdf:type jds:DatasetHTTP ;
+  jds:destination <https://dbpedia.org/sparql> ;
+  .
+

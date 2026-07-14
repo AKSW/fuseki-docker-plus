@@ -100,16 +100,16 @@ docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0 status
 
 Image tag format: `aksw/fuseki-plus:<fuseki-version>`
 
-Current version: **6.1.0-2** (based on Jena 6.1.0)
+Current version: **6.1.0-3** (based on Jena 6.1.0)
 
-Release tag: `aksw/fuseki-plus:6.1.0-2`
-
+Release tag: `aksw/fuseki-plus:6.1.0-3`
 
 | Version   | Changes |
 |-----------|---------|
-| 6.1.0-2   | Updated [ExecTracker Plugin](https://github.com/Scaseco/jena-exectracker/releases/tag/v0.7.1) which features a nicer UI |
-| 6.1.0     | Changed `FUSEKI_BASE` from  `/app/fuseki` to `/fuseki` |
-| 6.1.0-rc1 | Initial version |
+| 6.1.0-3   | Added [Proxy Plugin](https://github.com/Scaseco/jena-proxy) which supports Datasets over HTTP(S) SPARQL endpoints. |
+| 6.1.0-2   | Updated [ExecTracker Plugin](https://github.com/Scaseco/jena-exectracker/releases/tag/v0.7.1) which features a nicer UI. |
+| 6.1.0     | Changed `FUSEKI_BASE` from  `/app/fuseki` to `/fuseki`. |
+| 6.1.0-rc1 | Initial version. |
 
 ## Requirements
 

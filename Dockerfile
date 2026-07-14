@@ -23,7 +23,9 @@ RUN curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     "https://github.com/Scaseco/jenax/releases/download/v6.1.0-1/jenax-arq-plugins-bundle-6.1.0-1.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
-    "https://github.com/Scaseco/jenax/releases/download/v6.1.0-1/jenax-serviceenhancer-preview-plugin-6.1.0-1.jar"
+    "https://github.com/Scaseco/jenax/releases/download/v6.1.0-1/jenax-serviceenhancer-preview-plugin-6.1.0-1.jar" && \
+    curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
+    "https://github.com/Scaseco/jena-proxy/releases/download/v0.7.0-rc1/jena-proxy-fuseki-plugin-0.7.0-rc1.jar"
 
 # Copy plugins CLI with executable permission.
 # Plugins CLI is thus available at /usr/local/bin/plugins
