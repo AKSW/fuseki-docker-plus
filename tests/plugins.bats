@@ -202,3 +202,28 @@ teardown() {
     assert_output --regexp "Disabled:.*jena-exectracker"
     assert_output --regexp "Disabled:.*graphql4sparql"
 }
+
+@test "plugins status shows orphaned enabled plugin after removal" {
+    # Add a user plugin and enable it
+    local local_plugin_url="file:///fuseki/run/test-plugins/local-plugin.jar"
+    ${PLUGIN_LIST_CMD} add "${local_plugin_url}" > /dev/null
+
+    local plugin="local-plugin.jar"
+    ${PLUGIN_LIST_CMD} enable "$plugin" > /dev/null
+
+    # Verify it shows as enabled
+    run ${PLUGIN_LIST_CMD} status
+    assert_output --regexp "${plugin}.*\(enabled\)"
+
+    # Delete from user plugins directly (simulating external deletion)
+    # This leaves the plugin enabled in EXTRA but not available from source
+    docker exec $(./dc ps -q fuseki) rm -f /fuseki/run/plugins/"$plugin"
+
+    # Verify it no longer appears in list
+    run ${PLUGIN_LIST_CMD} list
+    refute_output --partial "$plugin"
+
+    # Verify it still appears in status as enabled (orphaned)
+    run ${PLUGIN_LIST_CMD} status
+    assert_output --regexp "${plugin}.*\(enabled\)"
+}
