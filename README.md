@@ -22,7 +22,7 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
 ### Build the Image
 
 ```bash
-docker build -t aksw/fuseki-plus:6.1.0-2 .
+docker build -t aksw/fuseki-plus:6.1.0-3 .
 ```
 
 ### Run with Docker Compose
