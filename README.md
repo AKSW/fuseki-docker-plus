@@ -7,13 +7,13 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
 
 ## Features
 
-- Base: [aksw/fuseki-vanilla:6.1.0](https://github.com/AKSW/fuseki-docker-vanilla)
+- Base: [aksw/fuseki-vanilla:6.2.0](https://github.com/AKSW/fuseki-docker-vanilla)
 - Pre-installed plugins in `/fuseki/builtin-plugins/`:
-  - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.1)
+  - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.2)
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
   - [jenax-arq-plugins](https://github.com/Scaseco/jenax) (v6.1.0-1)
   - [jenax-serviceenhancer](https://github.com/Scaseco/jenax) (v6.1.0-1)
-  - [Proxy Plugin](https://github.com/Scaseco/jena-proxy) (v0.7.0-rc1)
+  - [Proxy Plugin](https://github.com/Scaseco/jena-proxy) (v0.7.0)
 - Plugin management via CLI: `plugins`
 - Dynamic plugin installation from URLs
 - Volume-based plugin persistence
@@ -23,7 +23,7 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
 ### Build the Image
 
 ```bash
-docker build -t aksw/fuseki-plus:6.1.0-3 .
+docker build -t aksw/fuseki-plus:6.2.0-1 .
 ```
 
 ### Run with Docker Compose
@@ -80,12 +80,12 @@ The usage without compose is similar. Instead of the service name you need to sp
 
 List available plugins:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-3 list
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-1 list
 ```
 
 Check plugin status:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-3 status
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-1 status
 ```
 
 ## Directory Structure of a Container
@@ -101,12 +101,13 @@ docker run --rm --entrypoint plugins aksw/fuseki-plus:6.1.0-3 status
 
 Image tag format: `aksw/fuseki-plus:<fuseki-version>`
 
-Current version: **6.1.0-3** (based on Jena 6.1.0)
+Current version: **6.2.0-1** (based on Jena 6.2.0)
 
-Release tag: `aksw/fuseki-plus:6.1.0-3`
+Release tag: `aksw/fuseki-plus:6.2.0-1`
 
 | Version   | Changes |
 |-----------|---------|
+| 6.2.0-1   | Upgrade to jena 6.2.0. Fixed priority issue that caused `jena-exectracker` to not be able to track query executions for a `jena-proxy` dataset. |
 | 6.1.0-3   | Added [Proxy Plugin](https://github.com/Scaseco/jena-proxy) which supports Datasets over HTTP(S) SPARQL endpoints. |
 | 6.1.0-2   | Updated [ExecTracker Plugin](https://github.com/Scaseco/jena-exectracker/releases/tag/v0.7.1) which features a nicer UI. |
 | 6.1.0     | Changed `FUSEKI_BASE` from  `/app/fuseki` to `/fuseki`. |

@@ -34,7 +34,8 @@ PREFIX jetf:      <https://w3id.org/aksw/jena/exectracker/fuseki#>
     ];
     fuseki:allowedUsers "test" ;
   ] ;
-  fuseki:dataset <#proxyDS> .
+  fuseki:dataset <#proxyDS> ;
+  .
 
 <#proxyDS> rdf:type jds:DatasetHTTP ;
   jds:destination <https://dbpedia.org/sparql> ;

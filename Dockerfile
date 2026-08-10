@@ -1,6 +1,6 @@
-FROM aksw/fuseki-vanilla:6.1.0
+FROM aksw/fuseki-vanilla:6.2.0
 
-# FUSEKI_HOME built arg is assumed to match that of the base image!
+# FUSEKI_HOME build arg is assumed to match that of the base image!
 ARG FUSEKI_HOME=/fuseki
 
 ARG FUSEKI_BUILTIN_PLUGINS=${FUSEKI_HOME}/builtin-plugins
@@ -17,7 +17,7 @@ RUN mkdir -p ${FUSEKI_BUILTIN_PLUGINS} /usr/local/bin
 
 # Download pre-bundled plugins (exectracker, graphql4sparql, jenax-arq-plugins, jenax-serviceenhancer)
 RUN curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
-    "https://github.com/Scaseco/jena-exectracker/releases/download/v0.7.1/jena-exectracker-fuseki-plugin-0.7.1.jar" && \
+    "https://github.com/Scaseco/jena-exectracker/releases/download/v0.7.2/jena-exectracker-fuseki-plugin-0.7.2.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     "https://github.com/Scaseco/graphql4sparql/releases/download/v0.7.0/graphql4sparql-fuseki-plugin-0.7.0.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
@@ -25,7 +25,7 @@ RUN curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     "https://github.com/Scaseco/jenax/releases/download/v6.1.0-1/jenax-serviceenhancer-preview-plugin-6.1.0-1.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
-    "https://github.com/Scaseco/jena-proxy/releases/download/v0.7.0-rc1/jena-proxy-fuseki-plugin-0.7.0-rc1.jar"
+    "https://github.com/Scaseco/jena-proxy/releases/download/v0.7.1/jena-proxy-fuseki-plugin-0.7.1.jar"
 
 # Copy plugins CLI with executable permission.
 # Plugins CLI is thus available at /usr/local/bin/plugins

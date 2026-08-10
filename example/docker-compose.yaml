@@ -2,8 +2,8 @@
 
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.1.0-3
-    user: "${APP_UID}:${APP_GID}"
+    image: aksw/fuseki-plus:6.2.0-1
+    user: "${PUID}:${PGID}"
     environment:
       # Adjust memory usage to your needs!
       - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector
@@ -14,11 +14,11 @@ services:
     volumes:
       - ./run:/fuseki/run
       - ./resources:/fuseki/run/resources
-      - ./config.ttl:/fuseki/run/config.ttl
-      - ./passwd.txt:/fuseki/run/passwd.txt
-      - ./shiro.ini:/fuseki/run/shiro.ini
-      - ./example.service.ttl:/fuseki/run/configuration/example.service.ttl
-      - ./dbpedia.proxy.service.ttl:/fuseki/run/configuration/dbpedia.proxy.service.ttl
+      - ./config.ttl:/fuseki/run/config.ttl:ro
+      - ./passwd.txt:/fuseki/run/passwd.txt:ro
+      - ./shiro.ini:/fuseki/run/shiro.ini:ro
+      - ./example.service.ttl:/fuseki/run/configuration/example.service.ttl:ro
+      - ./dbpedia.proxy.service.ttl:/fuseki/run/configuration/dbpedia.proxy.service.ttl:ro
       - /var/run/docker.sock:/var/run/docker.sock
     # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme
     # working_dir: /data/coypu
