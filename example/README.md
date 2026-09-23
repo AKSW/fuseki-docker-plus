@@ -4,19 +4,19 @@ In order for this complex example setup to work, you must enable *all* plugins b
 
 1. List available plugins.
 ```bash
-./dc run --rm --entrypoint plugins fuseki list
+docker compose run --rm --entrypoint plugins fuseki list
 ```
 2. Enable *all* available plugins (those listed by the previous command).
 ```
-./dc run --rm --entrypoint plugins fuseki enable $(./dc run --rm --entrypoint plugins fuseki list)
+docker compose run --rm --entrypoint plugins fuseki enable $(docker compose run --rm --entrypoint plugins fuseki list)
 ```
 
 The command above effectively calls:
 ```bash
-./dc run --rm --entrypoint plugins fuseki enable PLUGIN1 PLUGIN2 # ...
+docker compose run --rm --entrypoint plugins fuseki enable PLUGIN1 PLUGIN2 # ...
 ```
 3. Start the server.
 ```bash
-./dc up
+docker compose up
 ```
 

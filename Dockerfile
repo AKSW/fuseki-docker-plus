@@ -1,4 +1,4 @@
-FROM aksw/fuseki-vanilla:6.2.0
+FROM aksw/fuseki-vanilla:6.2.0-2
 
 # FUSEKI_HOME build arg is assumed to match that of the base image!
 ARG FUSEKI_HOME=/fuseki
@@ -25,15 +25,20 @@ RUN curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
     "https://github.com/Scaseco/jenax/releases/download/v6.1.0-1/jenax-serviceenhancer-preview-plugin-6.1.0-1.jar" && \
     curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
-    "https://github.com/Scaseco/jena-proxy/releases/download/v0.7.1/jena-proxy-fuseki-plugin-0.7.1.jar"
+    "https://github.com/Scaseco/jena-proxy/releases/download/v0.7.1/jena-proxy-fuseki-plugin-0.7.1.jar" && \
+    curl -LJO --create-dirs --output-dir ${FUSEKI_BUILTIN_PLUGINS}/ \
+    "https://github.com/Scaseco/jena-inf-light/releases/download/v0.9.0-rc1/jena-inf-fuseki-plugin-0.9.0-rc1.jar"
 
 # Copy plugins CLI with executable permission.
 # Plugins CLI is thus available at /usr/local/bin/plugins
-COPY --chmod=755 plugins /usr/local/bin/
+# `plugins` is a thin wrapper: it chowns the data dir to WANT_UID:WANT_GID and
+# drops privileges via the base image's run-as.sh, then execs plugins-mgr.sh.
+COPY --chmod=755 plugins plugins-mgr.sh /usr/local/bin/
 
 # Inherited from base:
 # VOLUME /fuseki/run
 
 # Inherited from base:
-# ENTRYPOINT ["/fuseki/entrypoint.sh]
+# ENTRYPOINT ["/fuseki/entrypoint.sh"] -> run-as.sh chowns /fuseki/run to
+# WANT_UID:WANT_GID and drops privileges before starting the server.
 

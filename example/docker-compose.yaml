@@ -1,12 +1,36 @@
 #name: example
 
 services:
-  fuseki:
-    image: aksw/fuseki-plus:6.2.0-1
-    user: "${PUID}:${PGID}"
+  # The "init-run" service touches the nested bind mounts of the "fuseki" service once.
+  # Without this init run, those files would be owned by root.
+  init-run:
+    image: busybox
+    user: root
     environment:
+      - WANT_UID=${WANT_UID:-1000}
+      - WANT_GID=${WANT_GID:-1000}
+    volumes:
+      - ./run:/fuseki/run
+    command: >
+      sh -c 'install -d -o "$$WANT_UID" -g "$$WANT_GID" /fuseki/run/resources &&
+             install -D -m 0644 -o "$$WANT_UID" -g "$$WANT_GID" /dev/null /fuseki/run/config.ttl &&
+             install -D -m 0644 -o "$$WANT_UID" -g "$$WANT_GID" /dev/null /fuseki/run/passwd.txt &&
+             install -D -m 0644 -o "$$WANT_UID" -g "$$WANT_GID" /dev/null /fuseki/run/shiro.ini &&
+             install -D -m 0644 -o "$$WANT_UID" -g "$$WANT_GID" /dev/null /fuseki/run/configuration/example.service.ttl &&
+             install -D -m 0644 -o "$$WANT_UID" -g "$$WANT_GID" /dev/null /fuseki/run/configuration/dbpedia.proxy.service.ttl'
+
+  fuseki:
+    depends_on:
+      init-run:
+        condition: service_completed_successfully
+    image: aksw/fuseki-plus:6.2.0-2
+    environment:
+      # UID:GID the server runs as; the base image's run-as.sh chowns /fuseki/run
+      # to match on start. Do NOT also set `user:` - the chown phase needs root.
+      - WANT_UID=${WANT_UID:-1000}
+      - WANT_GID=${WANT_GID:-1000}
       # Adjust memory usage to your needs!
-      - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector
+      - JVM_ARGS=-Xmx1G -Dderby.stream.error.file=/fuseki/run/logs/fuseki_derby.log --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.vector -Djavax.net.ssl.trustStore=/fuseki/run/security/ldap-truststore.jks -Djavax.net.ssl.trustStorePassword=changeit
       - FUSEKI_BASE=/fuseki/run
     # group_add:
       # - "${DOCKER_GID}" # Needed for plugins that control other containers, such as the Qlever Fuseki Plugin
@@ -14,14 +38,16 @@ services:
     volumes:
       - ./run:/fuseki/run
       - ./resources:/fuseki/run/resources
+      # Non-LDAP auth
       - ./config.ttl:/fuseki/run/config.ttl:ro
       - ./passwd.txt:/fuseki/run/passwd.txt:ro
       - ./shiro.ini:/fuseki/run/shiro.ini:ro
+      # LDAP auth
+      #- ./config-ldap.ttl:/fuseki/run/config.ttl:ro
+      #- ./shiro-ldap.ini:/fuseki/run/shiro.ini:ro
       - ./example.service.ttl:/fuseki/run/configuration/example.service.ttl:ro
       - ./dbpedia.proxy.service.ttl:/fuseki/run/configuration/dbpedia.proxy.service.ttl:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    # - /.data_nvme/coypu_nvme:/.data_nvme/coypu_nvme
-    # working_dir: /data/coypu
     ports:
       - 3030:3030
       - 5005:5005

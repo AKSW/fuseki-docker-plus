@@ -16,6 +16,7 @@ PREFIX jxp:       <http://jenax.aksw.org/plugin#>
 PREFIX norse:     <https://w3id.org/aksw/norse#>
 PREFIX jetf:      <https://w3id.org/aksw/jena/exectracker/fuseki#>
 PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
+PREFIX inf:       <https://w3id.org/aksw/jena/inf#>
 
 <#service> rdf:type fuseki:Service ;
   fuseki:name "example" ;
@@ -55,7 +56,7 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
       ja:cxtName jetf:allowAbort ;
       ja:cxtValue true ;
     ];
-    fuseki:allowedUsers "test" ;
+    fuseki:allowedUsers "raven" ;
   ] ;
   fuseki:endpoint [
     fuseki:name "graphql" ;
@@ -75,14 +76,20 @@ PREFIX g4sf:      <https://w3id.org/aksw/graphql4sparql/fuseki#>
   ] ;
   fuseki:dataset <#pluginDS> .
 
-<#pluginDS> a fe:DatasetFromAsFilter
-  ; ja:baseDataset <#pluginDS2>
-  ; fe:alias [ fe:graph <https://data.coypu.org/> ; fe:expr "true"^^xdt:expr ],
-             [ fe:graph <https://data.coypu.org/events/acled/> ; fe:expr "?x IN (<https://data.coypu.org/events/acled/2022/>, <https://data.coypu.org/events/acled/2023/> )"^^xdt:expr] 
+<#pluginDS>
+  a fe:DatasetFromAsFilter ;
+  ja:baseDataset <#infDS> ; # XXX Plugin does not yet support plain ja:dataset
+  fe:alias [ fe:graph <https://data.coypu.org/> ; fe:expr "true"^^xdt:expr ],
+           [ fe:graph <https://data.coypu.org/events/acled/> ; fe:expr "?x IN (<https://data.coypu.org/events/acled/2022/>, <https://data.coypu.org/events/acled/2023/> )"^^xdt:expr] ;
+  .
+
+<#infDS>
+  a inf:DatasetSameAs ;
+  ja:dataset <#pluginDS2> ;
   .
 
 <#pluginDS2>
-  a jxp:DatasetRDFSEnabled ;
+  a inf:DatasetRDFSEnabled ;
   ja:rdfsSchema "/fuseki/run/resources/ontology.rdfs.ttl" ;
   ja:dataset <#pluginDS3> .
 

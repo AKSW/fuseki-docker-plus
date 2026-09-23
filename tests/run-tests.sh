@@ -5,14 +5,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Export user ID for docker compose (so volume files are owned by the host user)
-export APP_UID=$(id -u)
-export APP_GID=$(id -g)
+export WANT_UID=$(id -u)
+export WANT_GID=$(id -g)
 
 # Export bats-assert library path for bats_load_library
 export BATS_LIB_PATH="/usr/lib/bats"
 
 # Image name (override with IMAGE='foobar' ./run-tests.sh)
-IMAGE="${IMAGE:-fuseki-plus:6.1.0}"
+IMAGE="${IMAGE:-aksw/fuseki-plus:6.2.0-2}"
 
 # Colors
 RED='\033[0;31m'

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-mkdir -p run/configuration
-PUID="$(id -u)" PGID="$(id -g)" DOCKER_GID="$(getent group docker | cut -d: -f3)" docker compose "$@"
-
+mkdir -p run/configuration run/security run/extra
+WANT_UID="$(id -u)" WANT_GID="$(id -g)" DOCKER_GID="$(getent group docker | cut -d: -f3)" docker compose "$@"

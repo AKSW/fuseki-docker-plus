@@ -23,7 +23,7 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
 ### Build the Image
 
 ```bash
-docker build -t aksw/fuseki-plus:6.2.0-1 .
+docker build -t aksw/fuseki-plus:6.2.0-2 .
 ```
 
 ### Run with Docker Compose
@@ -43,8 +43,26 @@ It is needed if you want to use our Qlever Fuseki Plugin. This plugin binds the 
 #!/usr/bin/env bash
 
 mkdir -p run/configuration
-APP_UID="$(id -u)" APP_GID="$(id -g)" DOCKER_GID="$(getent group docker | cut -d: -f3)" docker compose "$@"
+WANT_UID="$(id -u)" WANT_GID="$(id -g)" DOCKER_GID="$(getent group docker | cut -d: -f3)" docker compose "$@"
 ```
+
+## Running as a Non-Root User
+
+The image starts as root, chowns the data volume (`/fuseki/run`) to the requested
+UID:GID, then drops privileges via `setpriv` before starting the server. Set the
+target user with:
+
+- `WANT_UID` — user ID to run Fuseki as (default: `1000`)
+- `WANT_GID` — group ID to run Fuseki as (default: `1000`)
+
+The UID/GID do not need to exist in the image's `/etc/passwd`.
+
+> **Note:** Do not set `user:` in compose (or `--user` with `docker run`). The
+> entrypoint needs root privileges for the chown phase; setting `user:` would break it.
+>
+> Note that files mounted `:ro` (e.g. the example config files) are skipped by the
+> chown phase and must stay readable by `WANT_UID` — so with read-only config mounts,
+> `WANT_UID` should match the host user that owns those files.
 
 The `example/` folder includes a setup with the `dc` wrapper script for simplified docker compose commands.
 
@@ -80,12 +98,12 @@ The usage without compose is similar. Instead of the service name you need to sp
 
 List available plugins:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-1 list
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-2 list
 ```
 
 Check plugin status:
 ```bash
-docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-1 status
+docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-2 status
 ```
 
 ## Directory Structure of a Container
@@ -101,12 +119,13 @@ docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-1 status
 
 Image tag format: `aksw/fuseki-plus:<fuseki-version>`
 
-Current version: **6.2.0-1** (based on Jena 6.2.0)
+Current version: **6.2.0-2** (based on Jena 6.2.0)
 
-Release tag: `aksw/fuseki-plus:6.2.0-1`
+Release tag: `aksw/fuseki-plus:6.2.0-2`
 
 | Version   | Changes |
 |-----------|---------|
+| 6.2.0-2   | Adopted the base image's `WANT_UID`/`WANT_GID` privilege model: compose examples no longer set `user:`; the `plugins` CLI now chowns the data volume and drops to the target user via the base image's `run-as.sh` before running. |
 | 6.2.0-1   | Upgrade to jena 6.2.0. Fixed priority issue that caused `jena-exectracker` to not be able to track query executions for a `jena-proxy` dataset. |
 | 6.1.0-3   | Added [Proxy Plugin](https://github.com/Scaseco/jena-proxy) which supports Datasets over HTTP(S) SPARQL endpoints. |
 | 6.1.0-2   | Updated [ExecTracker Plugin](https://github.com/Scaseco/jena-exectracker/releases/tag/v0.7.1) which features a nicer UI. |

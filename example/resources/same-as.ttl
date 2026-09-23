@@ -1,0 +1,8 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+PREFIX dbr: <http://dbpedia.org/resource/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+
+dbr:Mona_Lisa owl:sameAs wd:Q12418 .
+dbr:Leonardo_da_Vinci owl:sameAs wd:Q762 .
+

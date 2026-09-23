@@ -1,8 +1,9 @@
 services:
   fuseki:
-    image: aksw/fuseki-plus:6.1.0
-    user: "${APP_UID}:${APP_GID}"
+    image: aksw/fuseki-plus:6.2.0-2
     environment:
+      - WANT_UID=${WANT_UID:-1000}
+      - WANT_GID=${WANT_GID:-1000}
       - FUSEKI_BASE=/fuseki/run
     volumes:
       - ./run:/fuseki/run:rw
