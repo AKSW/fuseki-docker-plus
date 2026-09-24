@@ -7,7 +7,7 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
 
 ## Features
 
-- Base: [aksw/fuseki-vanilla:6.2.0](https://github.com/AKSW/fuseki-docker-vanilla)
+- Base: [aksw/fuseki-vanilla:6.2.0-2](https://github.com/AKSW/fuseki-docker-vanilla)
 - Pre-installed plugins in `/fuseki/builtin-plugins/`:
   - [jena-exectracker](https://github.com/Scaseco/jena-exectracker) (v0.7.2)
   - [graphql4sparql](https://github.com/Scaseco/graphql4sparql) (v0.7.0)
@@ -23,8 +23,10 @@ Otherwise, you just get a [Vanilla Fuseki Setup](https://github.com/AKSW/fuseki-
 ### Build the Image
 
 ```bash
-docker build -t aksw/fuseki-plus:6.2.0-2 .
+make build
 ```
+
+Versions are defined in `build.vars` (the single source of truth): `VANILLA_VERSION` is synced into the Dockerfile's `FROM` line and `IMAGE_TAG` is used as the image tag. Run `make sync-version` to propagate both into this README, `example/docker-compose.yaml`, and the tests before building or pushing. To bump the version, edit `build.vars` and re-run.
 
 ### Run with Docker Compose
 
@@ -117,9 +119,16 @@ docker run --rm --entrypoint plugins aksw/fuseki-plus:6.2.0-2 status
 
 ## Versioning
 
-Image tag format: `aksw/fuseki-plus:<fuseki-version>`
+Image tag format: `aksw/fuseki-plus:<fuseki-version>-<build>`
 
-Current version: **6.2.0-2** (based on Jena 6.2.0)
+Versions are defined in `build.vars` (the single source of truth):
+
+- `VANILLA_VERSION` — base image tag (`aksw/fuseki-vanilla:<tag>`), synced into the Dockerfile
+- `IMAGE_TAG` — this image's tag, e.g. `6.2.0-2` (currently mirrors the vanilla tag; can be overridden independently)
+
+`make sync-version` propagates both into the Dockerfile, this README, `example/docker-compose.yaml`, and the tests.
+
+Current image version: **6.2.0-2** (vanilla 6.2.0-2)
 
 Release tag: `aksw/fuseki-plus:6.2.0-2`
 
